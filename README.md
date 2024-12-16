@@ -1,3 +1,1 @@
-"# I2C-Checker" 
-"# I2C-Checker" 
-"# I2C-Checker" 
+This can be used in your personal projects including I2C devices. This code will make sure that you have connected to correct I2C device (helpful when you have multiple I2C devices on a single handle). You can even use the fucntion in main.c and call the fucntion whereever you want.
