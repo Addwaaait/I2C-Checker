@@ -62,37 +62,42 @@ static void MX_I2C1_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-#define device_ADDRESS 0x68
-#define WHO_AM_I_REGISTER 0x75
+#define device_ADDRESS 0x68  // Define the I2C address of the device .
+#define WHO_AM_I_REGISTER 0x75  // Define the WHO_AM_I register address, used to identify the device.
 
-bool check_connection(void)
+bool check_connection(void) // Function to check the connection to the device via I2C.
 {
-    uint8_t who_am_i[1] ={0};
-    HAL_StatusTypeDef status;
+    uint8_t who_am_i[1] = {0}; // Declare an array to store the value read from the WHO_AM_I register. Initialize it to 0.
+    HAL_StatusTypeDef status;  // Variable to store the status of the I2C communication.
 
+    // Read 1 byte from the WHO_AM_I register of the device with a timeout of 10 ms.
+    status = I2Cdev_readBytes(device_ADDRESS, WHO_AM_I_REGISTER, 1, who_am_i, 10);
 
-    status =I2Cdev_readBytes(device_ADDRESS, WHO_AM_I_REGISTER, 1, who_am_i ,10);
-
-    if (status == HAL_OK) // or change it to 1 instead of HAL_OK as readBytes returns the number of bytes read, so it should return 1
+    // Check if the I2C read operation was successful.
+    if (status == HAL_OK) // HAL_OK indicates a successful communication. Alternatively, it could check if the returned value is 1, the expected number of bytes read.
     {
+        // Print the value read from the WHO_AM_I register in hexadecimal format.
         printf("WHO_AM_I register: 0x%02X\r\n", who_am_i[0]);
 
-        //Check if the value matches the expected device value
-        //for the if statement change the who_am_i to whatever the devices who_am_i value
+        // Check if the WHO_AM_I value matches the expected value for the device (0x68 for MPU6050).
         if (who_am_i[0] == 0x68) {
+            // If the value matches, the device is successfully connected.
             printf("Device successfully connected.\r\n");
         } else {
+            // If the value does not match, print the unexpected WHO_AM_I value and indicate a problem.
             printf("Unexpected device found! WHO_AM_I = 0x%02X\r\n", who_am_i[0]);
-            return false;
+            return false; // Return false as the device identification failed.
         }
     }
     else
     {
+        // If the I2C read operation failed, print an error message.
         printf("Failed to read from Device!\r\n");
-        return false;
+        return false; // Return false as the device could not be read.
     }
-    return true;
+    return true; // Return true if the device is successfully connected and identified.
 }
+
 /* USER CODE END 0 */
 
 /**
@@ -134,6 +139,7 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  check_connection();
     /* USER CODE END WHILE */
 
 
